@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Cuota Hilton Azul Natural Beef - Escenarios</title>
+<style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f3ef;
+    margin: 0;
+    padding: 40px 16px;
+    display: flex;
+    justify-content: center;
+  }
+  .toolbar {
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto 10px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .toolbar button {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    background: #185fa5;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+  }
+  .wrap { display: flex; flex-direction: column; align-items: center; width: 100%; }
+  .card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px 36px;
+    max-width: 640px;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  body.compact .card {
+    max-width: 420px;
+    padding: 16px 18px;
+    border-radius: 10px;
+  }
+  body.compact h1 { font-size: 15px; margin: 0 0 2px; }
+  body.compact .subtitle { font-size: 11px; margin: 0 0 10px; }
+  body.compact #notaSemana, body.compact #finalSemana { font-size: 11px !important; padding: 8px 10px !important; gap: 6px !important; }
+  body.compact #notaSemana span[style*="26px"], body.compact #finalSemana span[style*="26px"] { font-size: 15px !important; }
+  body.compact .step { padding: 6px 0; gap: 8px; }
+  body.compact .step .op { width: 14px; font-size: 13px; }
+  body.compact .step .label { font-size: 11px; }
+  body.compact .step .value { font-size: 13px; }
+  body.compact .necesario { font-size: 11px; margin: 10px 0 6px; padding-top: 10px; }
+  body.compact .section-label { font-size: 11px; margin: 10px 0 3px; }
+  body.compact .weekly-table th, body.compact .weekly-table td { font-size: 11px; padding: 4px 4px; }
+  body.compact .detail-row td { font-size: 10px; padding: 0 4px 4px 16px; }
+  body.compact .week-row .chevron { font-size: 9px; }
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 4px;
+    color: #1a1a1a;
+  }
+  .subtitle {
+    font-size: 15px;
+    text-align: center;
+    color: #666;
+    margin: 0 0 24px;
+    font-style: italic;
+  }
+  .steps { border-top: 1px solid #e5e5e5; }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  .step .op { width: 26px; text-align: center; color: #999; font-size: 22px; }
+  .step .label { flex: 1; font-size: 18px; color: #444; }
+  .step .value { font-size: 24px; font-weight: 600; }
+  .step.bold .label { color: #1a1a1a; font-weight: 600; }
+  .step.bold .value { font-weight: 700; }
+  .necesario {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    border-top: 1px solid #e5e5e5;
+    padding-top: 20px;
+  }
+  .weekly-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 4px;
+  }
+  .weekly-table th, .weekly-table td {
+    padding: 8px 6px;
+    font-size: 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  .weekly-table th {
+    color: #666;
+    font-weight: 600;
+  }
+  .weekly-table td.num, .weekly-table th.num { text-align: right; }
+  .weekly-table tr.total td {
+    font-weight: 700;
+    color: #1a1a1a;
+    border-top: 1px solid #ccc;
+    border-bottom: none;
+  }
+  .section-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    margin: 20px 0 4px;
+  }
+  .week-row {
+    cursor: pointer;
+  }
+  .week-row:hover { background: #f4f3ef; }
+  .week-row .chevron {
+    display: inline-block;
+    transition: transform 0.15s;
+    margin-right: 6px;
+    color: #999;
+    font-size: 11px;
+  }
+  .week-row.open .chevron { transform: rotate(90deg); }
+  .detail-row td {
+    padding: 0 6px 8px 26px;
+    border-bottom: 1px solid #e5e5e5;
+    font-size: 13px;
+    color: #666;
+  }
+  .detail-row { display: none; }
+  .detail-row.open { display: table-row; }
+  .detail-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+  }  .qty-input {
+    width: 54px;
+    text-align: right;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 3px 4px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+  }
+  .qty-input:focus { outline: 2px solid #185fa5; border-color: #185fa5; }
+  .wide-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px 28px;
+    max-width: 1100px;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    margin-top: 16px;
+    box-sizing: border-box;
+  }
+  body.compact .wide-card { max-width: 420px; padding: 16px 18px; }
+  .scroll-hint {
+    font-size: 12px;
+    color: #999;
+    margin: 0 0 8px;
+  }
+  .wide-card .weekly-table thead th {
+    position: sticky;
+    top: 0;
+    background: #ffffff;
+    z-index: 2;
+    box-shadow: 0 1px 0 #ccc;
+  }
+  .saldo-disponible {
+    background: #eef5fb;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 0 0 14px;
+    font-size: 15px;
+  }
+  .saldo-disponible strong { font-size: 20px; color: #185fa5; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+  <div class="toolbar"><button id="toggleCompact" onclick="document.body.classList.toggle('compact'); this.textContent = document.body.classList.contains('compact') ? 'Ver tamaño normal' : 'Ver versión chica para mail';">Ver versión chica para mail</button></div>
+  <div class="card">
+    <h1>CUOTA HILTON AZUL NATURAL BEEF</h1>
+    <p class="subtitle">CICLO COMERCIAL 2026/2027</p>
+    <p style="font-size:17px; color:#c0392b; background:#fff6cc; border:1px solid #f2d772; border-radius:10px; padding:16px 18px; margin:0 0 20px; display:flex; align-items:flex-start; gap:12px;" id="notaSemana"><span style="font-size:26px; line-height:1;">&#9888;&#65039;</span><span id="notaSemanaTexto"></span></p>
+
+    <div class="steps" id="steps"></div>
+
+    <p class="necesario" id="finalSemana" style="font-size:17px; color:#c0392b; background:#fff6cc; border:1px solid #f2d772; border-radius:10px; padding:16px 18px; margin-top:24px; display:flex; align-items:flex-start; gap:12px;"></p>
+  </div>
+
+  <div class="wide-card">
+    <p class="section-label" style="margin-top:0;">Cuenta corriente W44/2026 a W21/2027 (por producto y época)</p>
+    <p class="saldo-disponible">Saldo disponible para repartir entre todas las semanas: <strong id="saldoDisponible"></strong> tn</p>
+    <p class="scroll-hint">⇠ Deslizá horizontalmente para ver todas las columnas ⇢</p>
+    <div style="overflow:auto; -webkit-overflow-scrolling:touch; max-height:70vh; border:1px solid #eee; border-radius:8px;">
+    <table class="weekly-table" style="min-width:900px;">
+      <thead>
+        <tr>
+          <th>Semana</th>
+          <th>Época</th>
+          <th class="num">R&amp;L M2000</th>
+          <th class="num">R&amp;L Fritz</th>
+          <th class="num">Ancho M2000</th>
+          <th class="num">Ancho RESTO</th>
+          <th class="num">Picanha</th>
+          <th class="num">Maminha</th>
+          <th class="num">Total (descuenta)</th>
+        </tr>
+      </thead>
+      <tbody id="cuentaCorrienteBody"></tbody>
+    </table>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; font-size:12px; color:#666;">
+      <span style="display:flex; align-items:center; gap:5px; font-weight:700; color:#1e8449;">Cuota marítima</span>
+      <span style="display:flex; align-items:center; gap:5px; font-weight:700; color:#e67e22;">Cuota aérea</span>
+      <span style="display:flex; align-items:center; gap:5px; font-weight:700; color:#c0392b;">Full levy</span>
+    </div>
+  </div>
+  </div>
+
+<script>
+const asignado = 1461.476;
+const certificado = 425.875;
+const cargadoPendCertif = 21.841 + 17.905 + 18.023;
+const saldo = asignado - certificado - cargadoPendCertif;
+
+const ventasPendientesProduccion = [
+  { semana: 39, kg: 60675, ventas: [
+      { venta: 10010, consignatario: 'ELVIDA FOODS S.A', kg: 19000 },
+      { venta: 10077, consignatario: 'ELVIDA FOODS S.A', kg: 675 },
+      { venta: 10110, consignatario: 'FRITZ VIEH- UND FLEISCHHANDELS GMBH', kg: 21000 },
+      { venta: 10138, consignatario: 'MEAT 2000 FLEISCHHANDELSGES.MBH', kg: 20000 }
+  ]},
+  { semana: 40, kg: 42000, ventas: [
+      { venta: 10082, consignatario: 'ELVIDA FOODS S.A', kg: 5000 },
+      { venta: 10083, consignatario: 'ELVIDA FOODS S.A', kg: 5000 },
+      { venta: 10139, consignatario: 'MEAT 2000 FLEISCHHANDELSGES.MBH', kg: 20000 },
+      { venta: 10160, consignatario: 'MFC SRL', kg: 12000 }
+  ]},
+  { semana: 41, kg: 70000, ventas: [
+      { venta: 10045, consignatario: 'ELVIDA TROFIMA ANONYMI ETAIRIA', kg: 19000 },
+      { venta: 10111, consignatario: 'FRITZ VIEH- UND FLEISCHHANDELS GMBH', kg: 21000 },
+      { venta: 10140, consignatario: 'MEAT 2000 FLEISCHHANDELSGES.MBH', kg: 30000 }
+  ]},
+  { semana: 42, kg: 21000, ventas: [
+      { venta: 10112, consignatario: 'FRITZ VIEH- UND FLEISCHHANDELS GMBH', kg: 21000 }
+  ]}
+];
+const totalVendidoPendiente = ventasPendientesProduccion.reduce(function(acc, w) { return acc + w.kg; }, 0) / 1000;
+const saldoNeto = saldo - totalVendidoPendiente;
+
+const proyeccionHilton = [
+  { semana: 43, items: [
+      { concepto: 'R&L M2000', tn: 18 },
+      { concepto: 'Ancho H Programa', tn: 2 },
+      { concepto: 'R&L Fritz', tn: 18 },
+      { concepto: 'Picanha', tn: 3 },
+      { concepto: 'Mmainha', tn: 2 }
+  ]}
+];
+const totalProyeccion = proyeccionHilton.reduce(function(acc, w) {
+  return acc + w.items.reduce(function(a, it) { return a + it.tn; }, 0);
+}, 0);
+const saldoTrasProyeccion = saldoNeto - totalProyeccion;
+
+function getISOWeekMonday(year, week) {
+  const jan4 = new Date(Date.UTC(year, 0, 4));
+  const jan4Day = jan4.getUTCDay() || 7;
+  const week1Monday = new Date(jan4);
+  week1Monday.setUTCDate(jan4.getUTCDate() - jan4Day + 1);
+  const target = new Date(week1Monday);
+  target.setUTCDate(week1Monday.getUTCDate() + (week - 1) * 7);
+  return target;
+}
+
+function getISOWeekInfo(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const week = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return { week: week, year: d.getUTCFullYear() };
+}
+
+function getCurrentISOWeekMonday(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() - day + 1);
+  return d;
+}
+
+const today = new Date();
+const currentInfo = getISOWeekInfo(today);
+const currentMonday = getCurrentISOWeekMonday(today);
+const targetMonday = getISOWeekMonday(2027, 21);
+const semanasRestantes = Math.round((targetMonday - currentMonday) / (7 * 86400000)) + 1;
+const semanaActualLabel = 'W' + currentInfo.week + '/' + currentInfo.year;
+const volumenPorSemanaNecesario = saldoNeto / semanasRestantes;
+
+const finProyeccionMonday = getISOWeekMonday(2026, 43);
+const inicioTrasProyeccionMonday = new Date(finProyeccionMonday);
+inicioTrasProyeccionMonday.setUTCDate(inicioTrasProyeccionMonday.getUTCDate() + 7);
+const semanasTrasProyeccion = Math.round((targetMonday - inicioTrasProyeccionMonday) / (7 * 86400000)) + 1;
+const volumenPorSemanaTrasProyeccion = saldoTrasProyeccion / semanasTrasProyeccion;
+
+function fmt(n) { return Math.round(n).toLocaleString('es-AR'); }
+function fmt1(n) { return n.toLocaleString('es-AR', {minimumFractionDigits: 1, maximumFractionDigits: 1}); }
+
+function fechaHoyDDMMYYYY(date) {
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const yyyy = date.getFullYear();
+  return dd + '-' + mm + '-' + yyyy;
+}
+const fechaHoyLabel = fechaHoyDDMMYYYY(new Date());
+
+const rows = [
+  { label: 'Cuota asignada', value: asignado, op: null, color: '#1a1a1a', key: null },
+  { label: 'Certificado', value: certificado, op: '-', color: '#0f6e56', key: null },
+  { label: 'Cargado, pend. de certif. (ventas 10007, 9996 y 10044)', value: cargadoPendCertif, op: '-', color: '#854f0b', key: null },
+  { label: 'Saldo (al ' + fechaHoyLabel + ')', value: saldo, op: '=', color: '#185fa5', key: null }
+];
+
+document.getElementById('notaSemanaTexto').innerHTML = 'Semana en curso: <span style="font-size:22px; font-weight:700;">' + semanaActualLabel + '</span>. Quedan ' + fmt(semanasRestantes) + ' semanas hasta W21/2027.';
+
+const ventasResumen = (function() {
+  const primerSemana = ventasPendientesProduccion[0].semana;
+  const ultimaSemana = ventasPendientesProduccion[ventasPendientesProduccion.length - 1].semana;
+  const detailLines = ventasPendientesProduccion.map(function(w) {
+    const ventasLines = w.ventas.map(function(v) {
+      return '<div class="detail-line" style="padding-left:14px;"><span>Venta ' + v.venta + ' — ' + v.consignatario + '</span><span>' + fmt1(v.kg / 1000) + ' tn</span></div>';
+    }).join('');
+    return '<div class="detail-line" style="font-weight:600; color:#444; margin-top:6px;"><span>W' + w.semana + '/2026</span><span>' + fmt1(w.kg / 1000) + ' tn</span></div>' + ventasLines;
+  }).join('');
+  return { label: 'Vendido W' + primerSemana + ' a W' + ultimaSemana + '/2026', value: totalVendidoPendiente, detail: detailLines };
+})();
+
+const proyeccionResumen = (function() {
+  const primerSemana = proyeccionHilton[0].semana;
+  const ultimaSemana = proyeccionHilton[proyeccionHilton.length - 1].semana;
+  const detailLines = proyeccionHilton.map(function(w) {
+    const totalSemana = w.items.reduce(function(a, it) { return a + it.tn; }, 0);
+    const itemLines = w.items.map(function(it) {
+      return '<div class="detail-line" style="padding-left:14px;"><span>' + it.concepto + '</span><span>' + fmt1(it.tn) + ' tn</span></div>';
+    }).join('');
+    return '<div class="detail-line" style="font-weight:600; color:#444; margin-top:6px;"><span>W' + w.semana + '/2026</span><span>' + fmt1(totalSemana) + ' tn</span></div>' + itemLines;
+  }).join('');
+  const rangoLabel = primerSemana === ultimaSemana ? ('W' + primerSemana + '/2026') : ('W' + primerSemana + ' a W' + ultimaSemana + '/2026');
+  return {
+    label: 'Proyectado ' + rangoLabel + ' (18 R&L x2 + 2 Ancho + 5 entre Picanha y Mamainha)',
+    value: totalProyeccion,
+    detail: detailLines
+  };
+})();
+
+const saldoFinal = saldo - ventasResumen.value - proyeccionResumen.value;
+
+rows.push({ label: ventasResumen.label, value: ventasResumen.value, op: '-', color: '#a3491f', key: 'vendido', detail: ventasResumen.detail });
+rows.push({ label: proyeccionResumen.label, value: proyeccionResumen.value, op: '-', color: '#6b4fa0', key: 'proyeccion', detail: proyeccionResumen.detail });
+rows.push({ label: 'Saldo a W44/2026', value: saldoFinal, op: '=', color: '#185fa5', bold: true, key: null });
+
+document.getElementById('steps').innerHTML = rows.map(function(r) {
+  const opChar = r.op ? r.op : '';
+  const chevron = r.key ? '<span class="chevron" style="display:inline-block; margin-right:6px; color:#999; font-size:11px; transition:transform 0.15s;">&#9656;</span>' : '';
+  const rowHtml = '<div class="step' + (r.bold ? ' bold' : '') + (r.key ? ' clickable-row' : '') + '" ' + (r.key ? 'data-key="' + r.key + '" style="cursor:pointer;"' : '') + '>' +
+    '<span class="op">' + opChar + '</span>' +
+    '<span class="label">' + chevron + r.label + '</span>' +
+    '<span class="value" style="color:' + r.color + ';">' + fmt(r.value) + ' tn</span>' +
+    '</div>';
+  const detailHtml = r.key ? '<div class="macro-detail" data-key-detail="' + r.key + '" style="display:none; padding:6px 0 10px 40px; border-bottom:1px solid #e5e5e5;">' + r.detail + '</div>' : '';
+  return rowHtml + detailHtml;
+}).join('');
+
+document.querySelectorAll('.clickable-row').forEach(function(row) {
+  row.addEventListener('click', function() {
+    const key = row.getAttribute('data-key');
+    const detail = document.querySelector('.macro-detail[data-key-detail="' + key + '"]');
+    const chevron = row.querySelector('.chevron');
+    const isOpen = detail.style.display === 'block';
+    detail.style.display = isOpen ? 'none' : 'block';
+    chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
+  });
+});
+
+document.getElementById('finalSemana').innerHTML = '<span style="font-size:26px; line-height:1;">&#9888;&#65039;</span><span>De W44/2026 a W21/2027 hay <strong>' + fmt(semanasTrasProyeccion) + ' semanas</strong>, con <strong>' + fmt1(volumenPorSemanaTrasProyeccion) + ' tn/semana</strong> necesarias.</span>';
+
+function epocaColor(epocaBase) {
+  const e = epocaBase.toLowerCase();
+  if (e.indexOf('levy') !== -1) return '#c0392b';
+  if (e.indexOf('aérea') !== -1) return '#e67e22';
+  if (e.indexOf('arít') !== -1) return '#1e8449';
+  return '#444';
+}
+
+const PRODUCTOS = ['R&L M2000', 'R&L Fritz', 'Ancho M2000', 'Ancho RESTO', 'Picanha', 'Maminha'];
+
+function renderCuentaCorriente() {
+  document.getElementById('cuentaCorrienteBody').innerHTML = cuentaCorriente.map(function(w, i) {
+    const epocaBase = w.epoca.split(' — ')[0];
+    const color = epocaColor(epocaBase);
+    const productCells = PRODUCTOS.map(function(p, pi) {
+      return '<td class="num"><input class="qty-input" type="number" step="0.1" value="' + (w.items[p] || 0) + '" data-week="' + i + '" data-prodidx="' + pi + '"></td>';
+    }).join('');
+    return '<tr>' +
+      '<td style="font-weight:700; white-space:nowrap;">' + w.semana + '/' + w.anio + '</td>' +
+      '<td style="font-size:12px; font-weight:700; color:' + color + ';">' + w.epoca + '</td>' +
+      productCells +
+      '<td class="num" style="font-weight:700; color:#a3491f;" id="total-' + i + '"></td>' +
+      '</tr>';
+  }).join('');
+
+  document.querySelectorAll('.qty-input').forEach(function(input) {
+    input.addEventListener('input', function() {
+      const w = parseInt(input.getAttribute('data-week'), 10);
+      const pi = parseInt(input.getAttribute('data-prodidx'), 10);
+      const p = PRODUCTOS[pi];
+      const v = parseFloat(String(input.value).replace(',', '.'));
+      cuentaCorriente[w].items[p] = isNaN(v) ? 0 : v;
+      recalcCuentaCorriente();
+    });
+  });
+
+  recalcCuentaCorriente();
+}
+
+function recalcCuentaCorriente() {
+  let totalAsignado = 0;
+  cuentaCorriente.forEach(function(w, i) {
+    const totalSemana = PRODUCTOS.reduce(function(acc, p) { return acc + (w.items[p] || 0); }, 0);
+    totalAsignado += totalSemana;
+    document.getElementById('total-' + i).textContent = (totalSemana > 0 ? '−' : '') + fmt1(totalSemana);
+  });
+  document.getElementById('saldoDisponible').textContent = fmt(saldoFinal - totalAsignado);
+}
+const cuentaCorriente = [
+  { anio: 2026, semana: 'W44', epoca: 'Marítima (Abre 1 de enero 2027)', items: {} },
+  { anio: 2026, semana: 'W45', epoca: 'Marítima (Abre 1 de enero 2027)', items: {} },
+  { anio: 2026, semana: 'W46', epoca: 'Marítima (Abre 1 de enero 2027)', items: {} },
+  { anio: 2026, semana: 'W47', epoca: 'Marítima (Abre 1 de enero 2027)', items: {} },
+  { anio: 2026, semana: 'W48', epoca: 'Aérea (Abre 1 de enero 2027)', items: {} },
+  { anio: 2026, semana: 'W49', epoca: 'Aérea (Abre 1 de enero 2027)', items: {} },
+  { anio: 2026, semana: 'W50', epoca: 'Aérea (Abre 1 de enero 2027)', items: {} },
+  { anio: 2026, semana: 'W51', epoca: 'Full levy', items: {} },
+  { anio: 2026, semana: 'W52', epoca: 'Full levy', items: {} },
+  { anio: 2026, semana: 'W53', epoca: 'Full levy', items: {} },
+  { anio: 2027, semana: 'W1', epoca: 'Full levy', items: {} },
+  { anio: 2027, semana: 'W2', epoca: 'Full levy', items: {} },
+  { anio: 2027, semana: 'W3', epoca: 'Full levy', items: {} },
+  { anio: 2027, semana: 'W4', epoca: 'Full levy', items: {} },
+  { anio: 2027, semana: 'W5', epoca: 'Full levy', items: {} },
+  { anio: 2027, semana: 'W6', epoca: 'Cuota Marítima (Abre 1 Abril)', items: {} },
+  { anio: 2027, semana: 'W7', epoca: 'Cuota Marítima (Abre 1 Abril)', items: {} },
+  { anio: 2027, semana: 'W8', epoca: 'Cuota Marítima (Abre 1 Abril)', items: {} },
+  { anio: 2027, semana: 'W9', epoca: 'Cuota Marítima (Abre 1 Abril)', items: {} },
+  { anio: 2027, semana: 'W10', epoca: 'Cuota aérea (Abre 1 Abril)', items: {} },
+  { anio: 2027, semana: 'W11', epoca: 'Cuota aérea (Abre 1 Abril)', items: {} },
+  { anio: 2027, semana: 'W12', epoca: 'Cuota aérea (Abre 1 Abril)', items: {} },
+  { anio: 2027, semana: 'W13', epoca: 'Full levy', items: {} },
+  { anio: 2027, semana: 'W14', epoca: 'Full levy', items: {} },
+  { anio: 2027, semana: 'W15', epoca: 'Full levy', items: {} },
+  { anio: 2027, semana: 'W16', epoca: 'Full levy', items: {} },
+  { anio: 2027, semana: 'W17', epoca: 'Full levy', items: {} },
+  { anio: 2027, semana: 'W18', epoca: 'Full levy', items: {} },
+  { anio: 2027, semana: 'W19', epoca: 'Cuota marítima (Abre 1 de Julio)', items: {} },
+  { anio: 2027, semana: 'W20', epoca: 'Cuota marítima (Abre 1 de Julio)', items: {} },
+  { anio: 2027, semana: 'W21', epoca: 'Cuota marítima (Abre 1 de Julio) — última semana de envío cuota Hilton', items: {} }
+];
+
+renderCuentaCorriente();
+</script>
+</body>
+</html>
