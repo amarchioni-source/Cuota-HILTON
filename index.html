@@ -183,7 +183,13 @@
     font-size: 15px;
   }
   .saldo-disponible strong { font-size: 20px; color: #185fa5; }
+  .sync-status { font-size: 11px; margin-left: 10px; }
+  .sync-status.ok { color: #1e8449; }
+  .sync-status.err { color: #c0392b; }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <div class="wrap">
@@ -200,7 +206,8 @@
 
   <div class="wide-card">
     <p class="section-label" style="margin-top:0;">Cuenta corriente W44/2026 a W21/2027 (por producto y época)</p>
-    <p class="saldo-disponible">Saldo disponible para repartir entre todas las semanas: <strong id="saldoDisponible"></strong> tn</p>
+    <p class="saldo-disponible">Saldo disponible para repartir entre todas las semanas: <strong id="saldoDisponible"></strong> tn <span id="guardadoIndicador" style="opacity:0; transition:opacity 0.3s; color:#1e8449; font-size:12px; font-weight:600; margin-left:10px;">&#10003; Guardado</span> <span id="syncStatus" class="sync-status">&#9679; Conectando...</span></p>
+    <p style="font-size:11px; color:#999; margin:-8px 0 10px;">Los datos se guardan y sincronizan en tiempo real para todos. <button id="borrarDatos" style="font-size:11px; background:none; border:none; color:#185fa5; text-decoration:underline; cursor:pointer; padding:0;">Borrar todos los datos</button></p>
     <p class="scroll-hint">⇠ Deslizá horizontalmente para ver todas las columnas ⇢</p>
     <div style="overflow:auto; -webkit-overflow-scrolling:touch; max-height:70vh; border:1px solid #eee; border-radius:8px;">
     <table class="weekly-table" style="min-width:900px;">
@@ -404,6 +411,90 @@ function epocaColor(epocaBase) {
 
 const PRODUCTOS = ['R&L M2000', 'R&L Fritz', 'Ancho M2000', 'Ancho RESTO', 'Picanha', 'Maminha'];
 
+// ---- Firebase (datos compartidos en tiempo real) ----
+const firebaseConfig = {
+  apiKey: "AIzaSyAF3jEkpnAKfdNdnUKynRqyU8_To8DNcRk",
+  authDomain: "cuota-hilton.firebaseapp.com",
+  databaseURL: "https://cuota-hilton-default-rtdb.firebaseio.com",
+  projectId: "cuota-hilton",
+  storageBucket: "cuota-hilton.firebasestorage.app",
+  messagingSenderId: "2464365033",
+  appId: "1:2464365033:web:66b1e91ca2b777119d7378"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const dbRef = db.ref('cuentaCorriente');
+
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    escucharCambiosRemotos();
+  }
+});
+firebase.auth().signInAnonymously().catch(function(err) {
+  console.error('Error de autenticación', err);
+  setSyncStatus(false);
+});
+
+function storageKey(w) { return w.anio + '-' + w.semana; }
+
+let suprimirEscrituraRemota = false;
+
+function escucharCambiosRemotos() {
+  dbRef.on('value', function(snapshot) {
+    const data = snapshot.val() || {};
+    suprimirEscrituraRemota = true;
+    cuentaCorriente.forEach(function(w) {
+      const key = storageKey(w);
+      w.items = data[key] || {};
+    });
+    actualizarInputsDesdeDatos();
+    suprimirEscrituraRemota = false;
+    setSyncStatus(true);
+  }, function(err) {
+    console.error('Error de sincronización', err);
+    setSyncStatus(false);
+  });
+}
+
+function setSyncStatus(ok) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  el.className = 'sync-status ' + (ok ? 'ok' : 'err');
+  el.innerHTML = ok ? '&#9679; Sincronizado' : '&#9679; Sin conexión';
+}
+
+function actualizarInputsDesdeDatos() {
+  cuentaCorriente.forEach(function(w, i) {
+    PRODUCTOS.forEach(function(p, pi) {
+      const input = document.querySelector('.qty-input[data-week="' + i + '"][data-prodidx="' + pi + '"]');
+      if (input && document.activeElement !== input) {
+        input.value = w.items[p] || 0;
+      }
+    });
+  });
+  recalcCuentaCorriente();
+}
+
+function saveData(week) {
+  if (suprimirEscrituraRemota) return;
+  try {
+    const key = storageKey(week);
+    dbRef.child(key).set(week.items);
+    mostrarGuardado();
+  } catch (e) {
+    console.error('No se pudo guardar', e);
+  }
+}
+
+let guardadoTimeout = null;
+function mostrarGuardado() {
+  const el = document.getElementById('guardadoIndicador');
+  if (!el) return;
+  el.style.opacity = '1';
+  clearTimeout(guardadoTimeout);
+  guardadoTimeout = setTimeout(function() { el.style.opacity = '0'; }, 1500);
+}
+
 function renderCuentaCorriente() {
   document.getElementById('cuentaCorrienteBody').innerHTML = cuentaCorriente.map(function(w, i) {
     const epocaBase = w.epoca.split(' — ')[0];
@@ -427,6 +518,7 @@ function renderCuentaCorriente() {
       const v = parseFloat(String(input.value).replace(',', '.'));
       cuentaCorriente[w].items[p] = isNaN(v) ? 0 : v;
       recalcCuentaCorriente();
+      saveData(cuentaCorriente[w]);
     });
   });
 
@@ -477,6 +569,12 @@ const cuentaCorriente = [
 ];
 
 renderCuentaCorriente();
+
+document.getElementById('borrarDatos').addEventListener('click', function() {
+  if (confirm('¿Borrar TODOS los datos de la cuenta corriente? Esto afecta a todos los que usan esta página.')) {
+    dbRef.remove();
+  }
+});
 </script>
 </body>
 </html>
