@@ -253,6 +253,9 @@ const ventasPendientesProduccion = [
   { semana: 44, kg: 48000, ventas: [
       { venta: 10189, consignatario: 'MEAT 2000 FLEISCHHANDELSGES.MBH', kg: 30000 },
       { venta: 10210, consignatario: 'FRITZ VIEH- UND FLEISCHHANDELS GMBH', kg: 18000 }
+  ]},
+  { semana: 45, kg: 20000, ventas: [
+      { venta: 10158, consignatario: 'ELVIDA FOODS S.A (Tapa y Colita)', kg: 20000 }
   ]}
 ];
 const totalVendidoPendiente = ventasPendientesProduccion.reduce(function(acc, w) { return acc + w.kg; }, 0) / 1000;
@@ -418,10 +421,10 @@ function recalcCuentaCorriente() {
 }
 const cuentaCorriente = [
   { anio: 2026, semana: 'W44', epoca: 'Marítima (Abre 1 de enero 2027)', items: {} },
-  { anio: 2026, semana: 'W45', epoca: 'Marítima (Abre 1 de enero 2027)', items: { 'Picanha': 3, 'Maminha': 2 } },
-  { anio: 2026, semana: 'W46', epoca: 'Marítima (Abre 1 de enero 2027)', items: { 'Picanha': 1, 'Maminha': 0.4 } },
-  { anio: 2026, semana: 'W47', epoca: 'Marítima (Abre 1 de enero 2027)', items: { 'Picanha': 3, 'Maminha': 2 } },
-  { anio: 2026, semana: 'W48', epoca: 'Aérea (Abre 1 de enero 2027)', items: {} },
+  { anio: 2026, semana: 'W45', epoca: 'Marítima (Abre 1 de enero 2027)', items: {} },
+  { anio: 2026, semana: 'W46', epoca: 'Marítima (Abre 1 de enero 2027)', items: { 'Picanha': 3, 'Maminha': 2 } },
+  { anio: 2026, semana: 'W47', epoca: 'Marítima (Abre 1 de enero 2027)', items: { 'Picanha': 1, 'Maminha': 0.4 } },
+  { anio: 2026, semana: 'W48', epoca: 'Aérea (Abre 1 de enero 2027)', items: { 'Picanha': 3, 'Maminha': 2 } },
   { anio: 2026, semana: 'W49', epoca: 'Aérea (Abre 1 de enero 2027)', items: {} },
   { anio: 2026, semana: 'W50', epoca: 'Aérea (Abre 1 de enero 2027)', items: {} },
   { anio: 2026, semana: 'W51', epoca: 'Full levy', items: {} },
