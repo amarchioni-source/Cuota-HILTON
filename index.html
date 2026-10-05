@@ -301,7 +301,7 @@ const semanasRestantes = Math.round((targetMonday - currentMonday) / (7 * 864000
 const semanaActualLabel = 'W' + currentInfo.week + '/' + currentInfo.year;
 const volumenPorSemanaNecesario = saldoNeto / semanasRestantes;
 
-const finProyeccionMonday = getISOWeekMonday(2026, 43);
+const finProyeccionMonday = getISOWeekMonday(2026, 45);
 const inicioTrasProyeccionMonday = new Date(finProyeccionMonday);
 inicioTrasProyeccionMonday.setUTCDate(inicioTrasProyeccionMonday.getUTCDate() + 7);
 const semanasTrasProyeccion = Math.round((targetMonday - inicioTrasProyeccionMonday) / (7 * 86400000)) + 1;
@@ -344,7 +344,7 @@ const proyeccionResumen = { label: '', value: 0, detail: '' };
 const saldoFinal = saldo - ventasResumen.value - proyeccionResumen.value;
 
 rows.push({ label: ventasResumen.label, value: ventasResumen.value, op: '-', color: '#a3491f', key: 'vendido', detail: ventasResumen.detail });
-rows.push({ label: 'Saldo a asignar desde W44/2026', value: saldoFinal, op: '=', color: '#185fa5', bold: true, key: null });
+rows.push({ label: 'Saldo a asignar desde W46/2026', value: saldoFinal, op: '=', color: '#185fa5', bold: true, key: null });
 
 document.getElementById('steps').innerHTML = rows.map(function(r) {
   const opChar = r.op ? r.op : '';
@@ -369,7 +369,7 @@ document.querySelectorAll('.clickable-row').forEach(function(row) {
   });
 });
 
-document.getElementById('finalSemana').innerHTML = '<span style="font-size:26px; line-height:1;">&#9888;&#65039;</span><span>De W44/2026 a W21/2027 hay <strong>' + fmt(semanasTrasProyeccion) + ' semanas</strong>, con <strong>' + fmt1(volumenPorSemanaTrasProyeccion) + ' tn/semana</strong> necesarias.</span>';
+document.getElementById('finalSemana').innerHTML = '<span style="font-size:26px; line-height:1;">&#9888;&#65039;</span><span>De W46/2026 a W21/2027 hay <strong>' + fmt(semanasTrasProyeccion) + ' semanas</strong>, con <strong>' + fmt1(volumenPorSemanaTrasProyeccion) + ' tn/semana</strong> necesarias.</span>';
 
 function epocaColor(epocaBase) {
   const e = epocaBase.toLowerCase();
